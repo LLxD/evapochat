@@ -14,7 +14,6 @@ const Home: NextPage = () => {
   const chat = useRef<HTMLDivElement>(null);
 
   const autoScrollToBottom = () => {
-    // scroll smooth
     chat.current?.scrollTo({
       top: chat.current.scrollHeight,
       behavior: "smooth",
@@ -58,12 +57,19 @@ const Home: NextPage = () => {
                 Welcome to evapochat
               </p>
             </div>
-            {data?.map((message) => {
+            {data?.map((message, index) => {
               return (
                 <div className="flex items-center gap-4">
-                  <span
-                    className={`h-4 w-4 rounded-full ${message.randomColor}`}
-                  ></span>
+                  {data[index - 1]?.randomColor !== message.randomColor ? (
+                    <span
+                      className={`h-4 w-4 rounded-full ${message.randomColor}`}
+                    ></span>
+                  ) : (
+                    <span
+                      className={`h-4 w-4 rounded-full bg-transparent`}
+                    ></span>
+                  )}
+
                   <p key={message.id} className="py-3 text-white">
                     {message.text}
                   </p>
