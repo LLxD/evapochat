@@ -41,9 +41,12 @@ const caller = messageRouter.createCaller({
   prisma,
 })
 
-const eraseMessagesEvery5Minutes = async () => {
-  await caller.eraseAll()
+const eraseMessagesEvery5Minutes = () => {
+  caller.eraseAll().then(()=>
   setTimeout(eraseMessagesEvery5Minutes, 1000 * 60 * 5)
+  ).catch((err) => {
+    console.error(err)
+  })
 }
 
 eraseMessagesEvery5Minutes()

@@ -59,7 +59,7 @@ const Home: NextPage = () => {
             </div>
             {data?.map((message, index) => {
               return (
-                <div className="flex items-center gap-4">
+                <div key={message.id} className="flex items-center gap-4">
                   {data[index - 1]?.randomColor !== message.randomColor ? (
                     <span
                       className={`h-4 w-4 rounded-full ${message.randomColor}`}
@@ -70,9 +70,7 @@ const Home: NextPage = () => {
                     ></span>
                   )}
 
-                  <p key={message.id} className="py-3 text-white">
-                    {message.text}
-                  </p>
+                  <p className="py-3 text-white">{message.text}</p>
                 </div>
               );
             })}
