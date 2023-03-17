@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const mutation = api.message.createMessage.useMutation();
-  const addMessage = (message: string) => {
+  const createMessage = (message: string) => {
     mutation.mutate({ text: message });
   };
 
@@ -16,26 +16,22 @@ const Home: NextPage = () => {
     chat.current?.scrollTo(0, chat.current.scrollHeight);
   };
 
-  const addMessageAndScroll = (message: string) => {
-    addMessage(message);
-    autoScrollToBottom();
+  const addMessageToChat = (message: string) => {
+    createMessage(message);
     setMessage("");
   };
 
-  const { data, error, refetch } = api.message.getAll.useQuery();
+  // add refetchInterval to automatically refetch data
+  const { data } = api.message.getAll.useQuery(undefined, {
+    refetchInterval: 200,
+  });
 
-  const [alreadyFetched, setAlreadyFetched] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!alreadyFetched) {
-      setInterval(() => {
-        refetch();
-        autoScrollToBottom();
-      }, 1000);
-      setAlreadyFetched(true);
-    }
-  }, []);
+    autoScrollToBottom();
+  }, [data]);
+
   return (
     <>
       <Head>
@@ -48,12 +44,9 @@ const Home: NextPage = () => {
           <h1 className="font-mono text-4xl font-bold text-orange-500">
             evapochat
           </h1>
-          <div
-            ref={chat}
-            className="grid max-h-96 gap-3 overflow-y-scroll  py-4"
-          >
+          <div ref={chat} className="h-96 overflow-y-scroll py-4">
             {data?.map((message) => (
-              <p key={message.id} className="text-white">
+              <p key={message.id} className="py-3 text-white">
                 {message.text}
               </p>
             ))}
@@ -61,7 +54,7 @@ const Home: NextPage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              addMessageAndScroll(message);
+              addMessageToChat(message);
             }}
             className="grid gap-2"
           >
@@ -72,7 +65,7 @@ const Home: NextPage = () => {
             ></input>
             <button
               onClick={() => {
-                addMessageAndScroll(message);
+                addMessageToChat(message);
               }}
               type="button"
               className="rounded border-2 border-orange-500 p-2 text-orange-500"
